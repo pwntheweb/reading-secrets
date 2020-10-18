@@ -1,6 +1,3 @@
-
-# Created by Noah Pearson (6e6f6168 aka vanillablunt)
-
 import base64
 import json
 import os
