@@ -1,11 +1,12 @@
 # steal-all-the-passwords
-all your passwords are belong to me
+Password stealing project by Noah Pearson
 
-dump chrome passwords: chromium.py<br />
-    -> you can handle logins[] however you like<br />
+Dump all Chromium based browser passwords: chromium.py<br />
+    -> Handle logins list however you like<br />
 <br />
-get discord token: discord.py<br />
-    -> sends POST request<br />
-    -> you will need to update url to one you control in order to get access to the token<br />
+Dump DiscordApp Tokens: discord.py<br />
+    -> Sends Post Request in this example<br />
+    -> Update URL to one you control<br />
+    -> This example infects host to always get the updated token<br />
 
-currently working on mozilla browser dumper
+Working on a few other credentials dumpers ATM
