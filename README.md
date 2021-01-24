@@ -2,5 +2,4 @@
 mmemememememememememe
 
 
-THEY HAVE NOT USED DEADLY FORCE. NO MATTER HOW DEAD YOU FEEL INSIDE.<br />
-SORRY
+basically just me looking in my appdata folder
