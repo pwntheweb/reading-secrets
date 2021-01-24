@@ -1,7 +1,5 @@
 import sqlite3
-import shutil
 import os
-import re
 import win32crypt
 
 localappdata = os.getenv('LOCALAPPDATA')
@@ -10,7 +8,6 @@ conn = sqlite3.connect(localappdata+"\\Steam\\htmlcache\\Cookies")
 cur = conn.cursor()
 #cur.execute("select name from sqlite_master where type = 'table';")
 cur.execute("SELECT * FROM cookies")
-names = list(map(lambda x: x[0], cur.description))
 
 
 res = cur.fetchall()
