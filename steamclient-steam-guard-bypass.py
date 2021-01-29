@@ -28,6 +28,9 @@ def copyAuthFiles():
     shutil.copy(getSteamSSFNFile(steam_dir), "SteamAuthFiles\\"+ssfn_file.split("\\")[len(ssfn_file.split("\\"))-1])
 
 def unloadAuthFiles():
+    """
+        Looks to see if steam files already exist, if so we remove them and copy our old files to the new location.
+    """
     loginusers_copy = "SteamAuthFiles\\loginusers.vdf"
     config_copy = "SteamAuthFiles\\config.vdf"
     ssfn_copy = getSteamSSFNFileFromPath("SteamAuthFiles")
